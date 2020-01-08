@@ -124,8 +124,9 @@ echo "
 			shutit_session.multisend('lxd init',{'default':''})
 			shutit_session.send('snapcraft --use-lxc')
 			shutit_session.send('snap install --dangerous microk8s_v1.17.0_amd64.snap --classic')
-			shutit_session.pause_point('')
-
+			shutit_session.send('snap install kubectl --classic')
+			shutit_session.send('microk8s.config > ~/.kube/config')
+			shutit_session.pause_point('now what?')
 
 		return True
 
