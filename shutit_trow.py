@@ -33,6 +33,7 @@ class shutit_trow(ShutItModule):
   config.vm.define "trow1" do |trow1|
     trow1.vm.box = ''' + '"' + vagrant_image + '"' + '''
     trow1.vm.hostname = "trow1.vagrant.test"
+    config.disksize.size = '50G'
     config.vm.provider :virtualbox do |vb|
       vb.name = "shutit_trow_1"
     end
@@ -56,7 +57,7 @@ end''')
 		# Set up the sessions
 		shutit_sessions = {}
 		for machine in sorted(machines.keys()):
-			shutit_sessions.update({machine:shutit.create_session('bash')})
+			shutit_sessions.update({machine:shutit.create_session('bash')}, loglevel='DEBUG')
 		# Set up and validate landrush
 		for machine in sorted(machines.keys()):
 			shutit_session = shutit_sessions[machine]
@@ -114,25 +115,36 @@ grep -i --color swap /proc/meminfo
 echo "
 /swapfile none            swap    sw              0       0" >> /etc/fstab''')
 
+		shutit.login('vagrant ssh')
+		shutit.login('sudo su')
+		shutit.send('git clone https://github.com/ubuntu/microk8s')
+		shutit.send('cd microk8s')
+		shutit.send('apt-get remove lxd* -y')
+		shutit.send('apt-get remove lxc* -y')
+		shutit.send('snap install snapcraft --classic')
+		shutit.multisend('lxd init',{'default':''})
+		shutit.multisend('snapcraft --use-lxd':{'LXD':'y'})
+		shutit.send('snap install --dangerous microk8s*.snap --classic')
+		shutit.send('snap install kubectl --classic')
+		shutit.send('mkdir -p ~/.kube')
+		shutit.send('microk8s.config > ~/.kube/config')
+		# We do not want registry here
+		#shutit.send('microk8s.enable dns registry storage dashboard rbac')
+		shutit.send('microk8s.enable dns storage dashboard rbac')
+		shutit.send('snap install docker')
+		shutit.send('cd')
+		shutit.send('git clone https://github.com/ContainerSolutions/trow')
+		shutit.send('cd trow')
+		shutit.pause_point('')
+
 		for machine in sorted(machines.keys()):
 			shutit_session = shutit_sessions[machine]
-			shutit_session.send('git clone https://github.com/ubuntu/microk8s')
-			shutit_session.send('cd microk8s')
-			shutit_session.send('apt-get remove lxd* -y')
-			shutit_session.send('apt-get remove lxc* -y')
-			shutit_session.send('snap install snapcraft --classic')
-			shutit_session.multisend('lxd init',{'default':''})
-			shutit_session.send('snapcraft --use-lxc')
-			shutit_session.send('snap install --dangerous microk8s_v1.17.0_amd64.snap --classic')
-			shutit_session.send('snap install kubectl --classic')
-			shutit_session.send('microk8s.config > ~/.kube/config')
-			shutit_session.pause_point('now what?')
 
 		return True
 
 
 	def get_config(self, shutit):
-		shutit.get_config(self.module_id,'vagrant_image',default='ubuntu/disco64')
+		shutit.get_config(self.module_id,'vagrant_image',default='ubuntu/bionic64')
 		shutit.get_config(self.module_id,'vagrant_provider',default='virtualbox')
 		shutit.get_config(self.module_id,'gui',default='false')
 		shutit.get_config(self.module_id,'memory',default='1024')
