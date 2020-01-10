@@ -117,9 +117,11 @@ echo "
 
 		shutit.login('vagrant ssh')
 		shutit.login('sudo su')
-		shutit.send('git clone https://github.com/ubuntu/microk8s')
+		shutit.send('snap install docker')
 		shutit.send(r'''echo 'export PATH=${PATH}:/snap/bin' >> /root/.bashrc''')
 		shutit.send(r'''export PATH=${PATH}:/snap/bin''')
+		# Microk8s
+		shutit.send('git clone https://github.com/ubuntu/microk8s')
 		shutit.send('cd microk8s')
 		shutit.send('apt-get remove lxd* -y')
 		shutit.send('apt-get remove lxc* -y')
@@ -132,8 +134,11 @@ echo "
 		shutit.send('microk8s.config > ~/.kube/config')
 		# We do not want registry here
 		#shutit.send('microk8s.enable dns registry storage dashboard rbac')
-		shutit.send('microk8s.enable dns storage dashboard rbac')
-		shutit.send('snap install docker')
+
+		# k3s
+		#shutit.send('curl -sfL https://get.k3s.io | sh -')
+
+		# Trow
 		shutit.send('cd')
 		shutit.send('git clone https://github.com/ContainerSolutions/trow')
 		shutit.send('cd trow')
