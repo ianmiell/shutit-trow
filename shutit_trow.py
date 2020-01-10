@@ -120,24 +120,25 @@ echo "
 		shutit.send('snap install docker')
 		shutit.send(r'''echo 'export PATH=${PATH}:/snap/bin' >> /root/.bashrc''')
 		shutit.send(r'''export PATH=${PATH}:/snap/bin''')
-		# Microk8s
-		shutit.send('git clone https://github.com/ubuntu/microk8s')
-		shutit.send('cd microk8s')
-		shutit.send('apt-get remove lxd* -y')
-		shutit.send('apt-get remove lxc* -y')
-		shutit.send('snap install snapcraft --classic')
-		shutit.multisend('lxd init',{'default':''})
-		shutit.multisend('snapcraft --use-lxd',{'LXD':'y'})
-		shutit.send('snap install --dangerous microk8s*.snap --classic')
-		shutit.send('snap install kubectl --classic')
-		shutit.send('mkdir -p ~/.kube')
-		shutit.send('microk8s.config > ~/.kube/config')
-		# We do not want registry here
-		#shutit.send('microk8s.enable dns registry storage dashboard rbac')
-		shutit.send('microk8s.enable dns')
+
+		## Microk8s
+		#shutit.send('git clone https://github.com/ubuntu/microk8s')
+		#shutit.send('cd microk8s')
+		#shutit.send('apt-get remove lxd* -y')
+		#shutit.send('apt-get remove lxc* -y')
+		#shutit.send('snap install snapcraft --classic')
+		#shutit.multisend('lxd init',{'default':''})
+		#shutit.multisend('snapcraft --use-lxd',{'LXD':'y'})
+		#shutit.send('snap install --dangerous microk8s*.snap --classic')
+		#shutit.send('snap install kubectl --classic')
+		#shutit.send('mkdir -p ~/.kube')
+		#shutit.send('microk8s.config > ~/.kube/config')
+		## We do not want registry here
+		##shutit.send('microk8s.enable dns registry storage dashboard rbac')
+		#shutit.send('microk8s.enable dns')
 
 		# k3s
-		#shutit.send('curl -sfL https://get.k3s.io | sh -')
+		shutit.send('curl -sfL https://get.k3s.io | sh -')
 
 		# Trow
 		shutit.send('cd')
