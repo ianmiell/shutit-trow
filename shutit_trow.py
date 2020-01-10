@@ -134,6 +134,7 @@ echo "
 		shutit.send('microk8s.config > ~/.kube/config')
 		# We do not want registry here
 		#shutit.send('microk8s.enable dns registry storage dashboard rbac')
+		shutit.send('microk8s.enable dns')
 
 		# k3s
 		#shutit.send('curl -sfL https://get.k3s.io | sh -')
