@@ -25,6 +25,7 @@ class shutit_trow(ShutItModule):
 		shutit.send('vagrant init ' + vagrant_image)
 		shutit.send_file(shutit.build['this_vagrant_run_dir'] + '/Vagrantfile','''Vagrant.configure("2") do |config|
   config.landrush.enabled = true
+  config.disksize.size = '50G'
   config.vm.provider "virtualbox" do |vb|
     vb.gui = ''' + gui + '''
     vb.memory = "''' + memory + '''"
@@ -33,7 +34,6 @@ class shutit_trow(ShutItModule):
   config.vm.define "trow1" do |trow1|
     trow1.vm.box = ''' + '"' + vagrant_image + '"' + '''
     trow1.vm.hostname = "trow1.vagrant.test"
-    config.disksize.size = '50G'
     config.vm.provider :virtualbox do |vb|
       vb.name = "shutit_trow_1"
     end
@@ -118,12 +118,14 @@ echo "
 		shutit.login('vagrant ssh')
 		shutit.login('sudo su')
 		shutit.send('git clone https://github.com/ubuntu/microk8s')
+		shutit.send(r'''echo 'export PATH=${PATH}:/snap/bin' >> /root/.bashrc''')
+		shutit.send(r'''export PATH=${PATH}:/snap/bin''')
 		shutit.send('cd microk8s')
 		shutit.send('apt-get remove lxd* -y')
 		shutit.send('apt-get remove lxc* -y')
 		shutit.send('snap install snapcraft --classic')
 		shutit.multisend('lxd init',{'default':''})
-		shutit.multisend('snapcraft --use-lxd':{'LXD':'y'})
+		shutit.multisend('snapcraft --use-lxd',{'LXD':'y'})
 		shutit.send('snap install --dangerous microk8s*.snap --classic')
 		shutit.send('snap install kubectl --classic')
 		shutit.send('mkdir -p ~/.kube')
