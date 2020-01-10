@@ -25,7 +25,7 @@ class shutit_trow(ShutItModule):
 		shutit.send('vagrant init ' + vagrant_image)
 		shutit.send_file(shutit.build['this_vagrant_run_dir'] + '/Vagrantfile','''Vagrant.configure("2") do |config|
   config.landrush.enabled = true
-  config.disksize.size = '50G'
+  config.disksize.size = "50GB"
   config.vm.provider "virtualbox" do |vb|
     vb.gui = ''' + gui + '''
     vb.memory = "''' + memory + '''"
