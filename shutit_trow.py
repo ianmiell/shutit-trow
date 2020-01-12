@@ -117,7 +117,9 @@ echo "
 
 		shutit.login('vagrant ssh')
 		shutit.login('sudo su')
-		shutit.send('snap install docker')
+		# Snap has trouble with /etc/hosts?
+		#shutit.send('snap install docker')
+		shutit.install('docker.io')
 		shutit.send(r'''echo 'export PATH=${PATH}:/snap/bin' >> /root/.bashrc''')
 		shutit.send(r'''export PATH=${PATH}:/snap/bin''')
 		# Microk8s
@@ -143,6 +145,12 @@ echo "
 		shutit.send('cd')
 		shutit.send('git clone https://github.com/ContainerSolutions/trow')
 		shutit.send('cd trow')
+		shutit.multisend('./quick-install/install.sh',{'y/n':'y'})
+		shutit.send('docker pull nginx')
+		shutit.send('docker tag nginx trow.kube-public:31000/nginx')
+		shutit.send('docker push trow.kube-public:31000/nginx')
+
+		# Different tools for querying registries
 		shutit.pause_point('')
 
 		for machine in sorted(machines.keys()):
