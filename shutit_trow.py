@@ -125,6 +125,8 @@ echo "
 		# Microk8s
 		shutit.send('git clone https://github.com/ubuntu/microk8s')
 		shutit.send('cd microk8s')
+		# Replace with latest containerd version (1.3)
+		shutit.send('''sed -i 's/{CONTAINERD_COMMIT:-[^}]*/{CONTAINERD_COMMIT:-ff48f57fc83a8c44cf4ad5d672424a98ba37ded6/g' /root/microk8s/build-scripts/set-env-variables.sh''')
 		shutit.send('apt-get remove lxd* -y')
 		shutit.send('apt-get remove lxc* -y')
 		shutit.send('snap install snapcraft --classic')
@@ -148,13 +150,14 @@ echo "
 		shutit.multisend('./quick-install/install.sh',{'y/n':'y'})
 		shutit.send('docker pull nginx')
 		shutit.send('docker tag nginx trow.kube-public:31000/nginx')
+		shutit.send('sleep 60')
 		shutit.send('docker push trow.kube-public:31000/nginx')
 
 		# Different tools for querying registries
 		shutit.pause_point('')
 
-		for machine in sorted(machines.keys()):
-			shutit_session = shutit_sessions[machine]
+		#for machine in sorted(machines.keys()):
+		#	shutit_session = shutit_sessions[machine]
 
 		return True
 
