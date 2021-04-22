@@ -158,7 +158,6 @@ echo "
 
 		#for machine in sorted(machines.keys()):
 		#	shutit_session = shutit_sessions[machine]
-
 		return True
 
 
